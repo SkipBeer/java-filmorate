@@ -70,7 +70,7 @@ public class FilmController {
 
     public boolean validation(Film film) throws InvalidTextFieldsException, InvalidDateException {
 
-        if (film.getName() == null || film.getDescription().length() > 200) {
+        if (film.getName() == null || film.getDescription().length() > 200 || film.getName().isBlank()) {
             throw new InvalidTextFieldsException();
         }
         if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28)) || film.getDuration() < 0) {
