@@ -13,9 +13,7 @@ import ru.yandex.practicum.filmorate.exceptions.InvalidTextFieldsException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAmount;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -33,7 +31,6 @@ class FilmorateApplicationTests {
 	void correctFilmValidationTest() throws InvalidDateException, InvalidTextFieldsException {
 		Film film = new Film(0, "name", "desc",
 				LocalDate.of(2000,10,20), 120);
-		
 		Assertions.assertTrue(filmController.validation(film));
 	}
 
@@ -41,12 +38,11 @@ class FilmorateApplicationTests {
 	void correctUserValidationTest() throws InvalidDateException, InvalidLoginException, InvalidEmailException {
 		User user = new User(0, "pochta@ya.ru", "login",
 				"name", LocalDate.of(2003,11,24));
-		
 		Assertions.assertTrue(userController.validation(user));
 	}
 
 	@Test
-	void blankFilmNameTest(){
+	void blankFilmNameTest() {
 		Film film = new Film(0, null, "desc",
 				LocalDate.of(2000,10,20), 120);
 
@@ -61,7 +57,7 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	void incorrectFilmDescTest(){
+	void incorrectFilmDescTest() {
 		Film film = new Film(0, "name", "desc".repeat(200),
 				LocalDate.of(2000,10,20), 120);
 
@@ -76,7 +72,7 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	void incorrectFilmReleaseDateTest(){
+	void incorrectFilmReleaseDateTest() {
 		Film film = new Film(0, "name", "desc",
 				LocalDate.of(1800,10,20), 120);
 
@@ -91,7 +87,7 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	void incorrectFilmDurationTest(){
+	void incorrectFilmDurationTest() {
 		Film film = new Film(0, "name", "desc",
 				LocalDate.of(1800,10,20), -120);
 
@@ -107,7 +103,7 @@ class FilmorateApplicationTests {
 
 
 	@Test
-	void blankEmailTest(){
+	void blankEmailTest() {
 		User user = new User(0, null, "login",
 				"name", LocalDate.of(2003,11,24));
 
@@ -122,7 +118,7 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	void incorrectEmailTest(){
+	void incorrectEmailTest() {
 		User user = new User(0, " ", "login",
 				"name", LocalDate.of(2003,11,24));
 
@@ -137,7 +133,7 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	void blankLoginTest(){
+	void blankLoginTest() {
 		User user = new User(0, "pochta@ya.ru", null,
 				"name", LocalDate.of(2003,11,24));
 
@@ -152,7 +148,7 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	void incorrectLoginTest(){
+	void incorrectLoginTest() {
 		User user = new User(0, "pochta@ya.ru", "pro bel",
 				"name", LocalDate.of(2003,11,24));
 
@@ -167,7 +163,7 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	void incorrectBirthdayTest(){
+	void incorrectBirthdayTest() {
 		User user = new User(0, "pochta@ya.ru", "login",
 				"name", LocalDate.of(3000,10,10));
 
