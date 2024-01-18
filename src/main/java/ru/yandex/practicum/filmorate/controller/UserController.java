@@ -33,14 +33,11 @@ public class UserController {
     }
 
     @PostMapping(value = "/users")
-    public User create(@RequestBody User user) throws InvalidDateException, InvalidLoginException, InvalidEmailException {
+    public User create(@RequestBody User user) {
 
         log.debug("Получен запрос на добавление фильма, Переданная сущность: '{}'", user.toString());
 
-        if (!validation(user)) {
-            return null;
-        }
-
+        validation(user);
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
@@ -52,32 +49,22 @@ public class UserController {
     }
 
     @PutMapping(value = "/users")
-    public User update(@RequestBody User user) throws InvalidEmailException, InvalidLoginException, InvalidDateException, UnknownUserException {
+    public User update(@RequestBody User user) {
 
         log.debug("Получен запрос на обновление фильма, Переданная сущность: '{}'", user.toString());
 
-        if (!validation(user)) {
-            return null;
-        }
-
-
-        boolean findFlag = false;
-        for (User oldUser : users) {
-            if (user.getId() == oldUser.getId()) {
-                findFlag = true;
-                users.remove(oldUser);
-                users.add(user);
-            }
-        }
-
-        if (!findFlag) {
+        validation(user);
+        if (users.contains(user)) {
+            users.remove(user);
+            users.add(user);
+        } else {
             throw new UnknownUserException();
         }
 
         return user;
     }
 
-    public boolean validation(User user) throws InvalidEmailException, InvalidLoginException, InvalidDateException {
+    public void validation(User user) {
 
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
             throw new InvalidEmailException();
@@ -90,7 +77,5 @@ public class UserController {
         if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new InvalidDateException();
         }
-
-        return true;
     }
 }

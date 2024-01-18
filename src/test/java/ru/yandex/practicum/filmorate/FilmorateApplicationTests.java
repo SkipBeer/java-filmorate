@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,20 +27,6 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	void correctFilmValidationTest() throws InvalidDateException, InvalidTextFieldsException {
-		Film film = new Film(0, "name", "desc",
-				LocalDate.of(2000,10,20), 120);
-		Assertions.assertTrue(filmController.validation(film));
-	}
-
-	@Test
-	void correctUserValidationTest() throws InvalidDateException, InvalidLoginException, InvalidEmailException {
-		User user = new User(0, "pochta@ya.ru", "login",
-				"name", LocalDate.of(2003,11,24));
-		Assertions.assertTrue(userController.validation(user));
-	}
-
-	@Test
 	void blankFilmNameTest() {
 		Film film = new Film(0, null, "desc",
 				LocalDate.of(2000,10,20), 120);
@@ -50,7 +35,7 @@ class FilmorateApplicationTests {
 				InvalidTextFieldsException.class,
 				new Executable() {
 					@Override
-					public void execute() throws InvalidDateException, InvalidTextFieldsException {
+					public void execute() {
 						filmController.validation(film);
 					}
 				});
@@ -65,7 +50,7 @@ class FilmorateApplicationTests {
 				InvalidTextFieldsException.class,
 				new Executable() {
 					@Override
-					public void execute() throws InvalidDateException, InvalidTextFieldsException {
+					public void execute() {
 						filmController.validation(film);
 					}
 				});
@@ -80,7 +65,7 @@ class FilmorateApplicationTests {
 				InvalidDateException.class,
 				new Executable() {
 					@Override
-					public void execute() throws InvalidDateException, InvalidTextFieldsException {
+					public void execute() {
 						filmController.validation(film);
 					}
 				});
@@ -95,7 +80,7 @@ class FilmorateApplicationTests {
 				InvalidDateException.class,
 				new Executable() {
 					@Override
-					public void execute() throws InvalidDateException, InvalidTextFieldsException {
+					public void execute() {
 						filmController.validation(film);
 					}
 				});
@@ -111,7 +96,7 @@ class FilmorateApplicationTests {
 				InvalidEmailException.class,
 				new Executable() {
 					@Override
-					public void execute() throws InvalidDateException, InvalidLoginException, InvalidEmailException {
+					public void execute() {
 						userController.validation(user);
 					}
 				});
@@ -126,7 +111,7 @@ class FilmorateApplicationTests {
 				InvalidEmailException.class,
 				new Executable() {
 					@Override
-					public void execute() throws InvalidDateException, InvalidLoginException, InvalidEmailException {
+					public void execute() {
 						userController.validation(user);
 					}
 				});
@@ -141,7 +126,7 @@ class FilmorateApplicationTests {
 				InvalidLoginException.class,
 				new Executable() {
 					@Override
-					public void execute() throws InvalidDateException, InvalidLoginException, InvalidEmailException {
+					public void execute() {
 						userController.validation(user);
 					}
 				});
@@ -156,7 +141,7 @@ class FilmorateApplicationTests {
 				InvalidLoginException.class,
 				new Executable() {
 					@Override
-					public void execute() throws InvalidDateException, InvalidLoginException, InvalidEmailException {
+					public void execute() {
 						userController.validation(user);
 					}
 				});
@@ -171,7 +156,7 @@ class FilmorateApplicationTests {
 				InvalidDateException.class,
 				new Executable() {
 					@Override
-					public void execute() throws InvalidDateException, InvalidLoginException, InvalidEmailException {
+					public void execute() {
 						userController.validation(user);
 					}
 				});

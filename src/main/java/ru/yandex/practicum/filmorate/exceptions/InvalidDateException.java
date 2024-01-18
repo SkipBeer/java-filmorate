@@ -1,4 +1,4 @@
 package ru.yandex.practicum.filmorate.exceptions;
 
-public class InvalidDateException extends Exception{
+public class InvalidDateException extends RuntimeException{
 }

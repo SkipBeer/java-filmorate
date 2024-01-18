@@ -32,11 +32,11 @@ public class FilmController {
     }
 
     @PostMapping(value = "/films")
-    public Film create(@RequestBody Film film) throws InvalidDateException, InvalidTextFieldsException {
+    public Film create(@RequestBody Film film) {
 
         log.debug("Получен запрос на добавление фильма, Переданная сущность: '{}'", film.toString());
 
-        if (!validation(film)) return null;
+        validation(film);
 
         film.setId(generateId());
 
@@ -45,30 +45,22 @@ public class FilmController {
     }
 
     @PutMapping(value = "/films")
-    public Film update(@RequestBody Film film) throws UnknownFilmException, InvalidDateException, InvalidTextFieldsException {
+    public Film update(@RequestBody Film film) {
 
         log.debug("Получен запрос на обновление фильма, Переданная сущность: '{}'", film.toString());
 
-        if (!validation(film)) {
-            return null;
+        validation(film);
+        if (films.contains(film)) {
+            films.remove(film);
+            films.add(film);
+        } else {
+            throw new UnknownFilmException();
         }
-
-
-        boolean findFlag = false;
-        for (Film oldFilm : films) {
-            if (film.getId() == oldFilm.getId()) {
-                findFlag = true;
-                films.remove(oldFilm);
-                films.add(film);
-            }
-        }
-
-        if (!findFlag) throw new UnknownFilmException();
 
         return film;
     }
 
-    public boolean validation(Film film) throws InvalidTextFieldsException, InvalidDateException {
+    public void validation(Film film) {
 
         if (film.getName() == null || film.getDescription().length() > 200 || film.getName().isBlank()) {
             throw new InvalidTextFieldsException();
@@ -76,8 +68,6 @@ public class FilmController {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28)) || film.getDuration() < 0) {
             throw new InvalidDateException();
         }
-
-        return true;
     }
 
 }

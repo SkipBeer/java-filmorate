@@ -1,4 +1,4 @@
 package ru.yandex.practicum.filmorate.exceptions;
 
-public class InvalidEmailException extends Exception{
+public class InvalidEmailException extends RuntimeException{
 }

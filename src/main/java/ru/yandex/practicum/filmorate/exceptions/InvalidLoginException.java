@@ -1,4 +1,4 @@
 package ru.yandex.practicum.filmorate.exceptions;
 
-public class InvalidLoginException extends Exception{
+public class InvalidLoginException extends RuntimeException{
 }
