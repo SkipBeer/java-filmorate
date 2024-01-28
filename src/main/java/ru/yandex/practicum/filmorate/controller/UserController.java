@@ -8,74 +8,98 @@ import ru.yandex.practicum.filmorate.exceptions.InvalidEmailException;
 import ru.yandex.practicum.filmorate.exceptions.InvalidLoginException;
 import ru.yandex.practicum.filmorate.exceptions.UnknownUserException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private final List<User> users = new ArrayList<>();
+    private final UserService userService;
 
-    private int generatorId = 0;
-
-    private int generateId() {
-        return ++generatorId;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public List<User> findAll() {
+        List<User> users = userService.getAll();
         log.debug("Текущее количество пользователей: {}", users.size());
         return users;
     }
 
-    @PostMapping(value = "/users")
+    @PostMapping
     public User create(@RequestBody User user) {
 
         log.debug("Получен запрос на добавление фильма, Переданная сущность: '{}'", user.toString());
-
         validation(user);
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
-
-        user.setId(generateId());
-
-        users.add(user);
-        return user;
+        return userService.createUser(user);
     }
 
-    @PutMapping(value = "/users")
+    @PutMapping
     public User update(@RequestBody User user) {
 
         log.debug("Получен запрос на обновление фильма, Переданная сущность: '{}'", user.toString());
-
         validation(user);
-        if (users.contains(user)) {
-            users.remove(user);
-            users.add(user);
-        } else {
-            throw new UnknownUserException();
+        User user1  = userService.updateUser(user);
+        if (user1 == null) {
+            throw new UnknownUserException("Пользователь с id " + user.getId() + " не существует");
         }
+        return userService.updateUser(user);
+    }
 
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable("id") Integer id) {
+        User user = userService.getUserById(id);
+        if (user == null) {
+            throw new UnknownUserException("Пользователь с id " + id + " не существует");
+        }
         return user;
     }
 
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+            User user = userService.addFriend(id, friendId);
+            if (user == null) {
+                throw new UnknownUserException("Пользователя с таким id не существует");
+            }
+            return user;
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        return userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable("id") Integer id) {
+        return userService.getUserFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
+        return userService.getCommonFriends(id, otherId);
+    }
+
     public void validation(User user) {
+        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
+           user.setName(user.getLogin());
+        }
 
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
-            throw new InvalidEmailException();
+            throw new InvalidEmailException("e-mail не может быть пустым и должен содержать символ @");
         }
 
         if (user.getLogin() == null || user.getLogin().contains(" ")) {
-            throw new InvalidLoginException();
+            throw new InvalidLoginException("Логин не может быть пустым или содержать пробелы");
         }
 
         if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new InvalidDateException();
+            throw new InvalidDateException("Ошибка даты рождения");
         }
     }
 }

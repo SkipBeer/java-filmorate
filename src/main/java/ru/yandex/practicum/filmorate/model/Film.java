@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -28,4 +30,21 @@ public class Film {
 
     @EqualsAndHashCode.Exclude
     private int duration;
+
+    @EqualsAndHashCode.Exclude
+    private Set<Integer> likes;
+
+    public Integer addLike(Integer id) {
+        likes.add(id);
+        return id;
+    }
+
+    public Integer deleteLike(Integer id) {
+        likes.remove(id);
+        return id;
+    }
+
+    public void setLikes() {
+        this.likes = new HashSet<>();
+    }
 }
