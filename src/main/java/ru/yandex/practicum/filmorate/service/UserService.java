@@ -24,13 +24,11 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        user.setFriends();
         user.setId(generateId());
         return userStorage.add(user);
     }
 
     public User updateUser(User user) {
-        user.setFriends();
         return userStorage.update(user);
     }
 
@@ -69,9 +67,11 @@ public class UserService {
 
     public List<User> getCommonFriends(Integer userId, Integer otherId) {
         List<User> result = new ArrayList<>();
+        User user = userStorage.getUserById(userId);
+        User otherUser = userStorage.getUserById(otherId);
 
-        for (Integer friendId : userStorage.getUserById(userId).getFriends()) {
-            if (userStorage.getUserById(otherId).getFriends().contains(friendId)) {
+        for (Integer friendId : user.getFriends()) {
+            if (otherUser.getFriends().contains(friendId)) {
                 result.add(userStorage.getUserById(friendId));
             }
         }

@@ -30,13 +30,11 @@ public class FilmService {
     }
 
     public Film addFilm(Film film) {
-        film.setLikes();
         film.setId(generateId());
         return filmStorage.add(film);
     }
 
     public Film updateFilm(Film film) {
-        film.setLikes();
         return filmStorage.update(film);
     }
 
@@ -73,7 +71,7 @@ public class FilmService {
         return filmsList.subList(0, count);
     }
 
-    static class LikesComparator implements Comparator<Film> {
+    private static class LikesComparator implements Comparator<Film> {
 
         @Override
         public int compare(Film o1, Film o2) {

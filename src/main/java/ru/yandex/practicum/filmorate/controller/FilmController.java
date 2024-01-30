@@ -4,11 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.InvalidDateException;
-import ru.yandex.practicum.filmorate.exceptions.InvalidTextFieldsException;
 import ru.yandex.practicum.filmorate.exceptions.UnknownFilmException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -41,23 +41,27 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
 
         log.debug("Получен запрос на добавление фильма, Переданная сущность: '{}'", film.toString());
-        validation(film);
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
+            throw new InvalidDateException("дата выпуска фильма должна быть после 28.12.1895");
+        }
         return filmService.addFilm(film);
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
 
         log.debug("Получен запрос на обновление фильма, Переданная сущность: '{}'", film.toString());
-        validation(film);
-        Film film1 = filmService.updateFilm(film);
-        if (film1 == null) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
+            throw new InvalidDateException("дата выпуска фильма должна быть после 28.12.1895");
+        }
+        Film updatedFilm = filmService.updateFilm(film);
+        if (updatedFilm == null) {
             throw new UnknownFilmException("Фильм с id " + film.getId() + " не существует");
         }
-        return filmService.updateFilm(film);
+        return updatedFilm;
     }
 
     @PutMapping("/{id}/like/{userId}")
@@ -82,17 +86,4 @@ public class FilmController {
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") String count) {
         return filmService.getMostPopularFilms(Integer.parseInt(count));
     }
-
-    public void validation(Film film) {
-
-        if (film.getName() == null || film.getDescription().length() > 200 || film.getName().isBlank()) {
-            throw new InvalidTextFieldsException("Название фильма не может быть пустым, описание не должно превышать" +
-                    " 200 символов");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28)) || film.getDuration() < 0) {
-            throw new InvalidDateException("Длительность фильмы не может быть отрицательной, дата выпуска" +
-                    " должна быть после 28.12.1895");
-        }
-    }
-
 }

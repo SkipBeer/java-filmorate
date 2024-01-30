@@ -3,14 +3,11 @@ package ru.yandex.practicum.filmorate.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.InvalidDateException;
-import ru.yandex.practicum.filmorate.exceptions.InvalidEmailException;
-import ru.yandex.practicum.filmorate.exceptions.InvalidLoginException;
 import ru.yandex.practicum.filmorate.exceptions.UnknownUserException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,23 +30,27 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
+    public User create(@Valid @RequestBody User user) {
 
         log.debug("Получен запрос на добавление фильма, Переданная сущность: '{}'", user.toString());
-        validation(user);
+        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         return userService.createUser(user);
     }
 
     @PutMapping
-    public User update(@RequestBody User user) {
+    public User update(@Valid @RequestBody User user) {
 
         log.debug("Получен запрос на обновление фильма, Переданная сущность: '{}'", user.toString());
-        validation(user);
-        User user1  = userService.updateUser(user);
-        if (user1 == null) {
+        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
+        User updatedUser = userService.updateUser(user);
+        if (updatedUser == null) {
             throw new UnknownUserException("Пользователь с id " + user.getId() + " не существует");
         }
-        return userService.updateUser(user);
+        return updatedUser;
     }
 
     @GetMapping("/{id}")
@@ -83,23 +84,5 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
         return userService.getCommonFriends(id, otherId);
-    }
-
-    public void validation(User user) {
-        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
-           user.setName(user.getLogin());
-        }
-
-        if (user.getEmail() == null || !user.getEmail().contains("@")) {
-            throw new InvalidEmailException("e-mail не может быть пустым и должен содержать символ @");
-        }
-
-        if (user.getLogin() == null || user.getLogin().contains(" ")) {
-            throw new InvalidLoginException("Логин не может быть пустым или содержать пробелы");
-        }
-
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new InvalidDateException("Ошибка даты рождения");
-        }
     }
 }

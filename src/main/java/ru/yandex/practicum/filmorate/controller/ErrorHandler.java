@@ -10,49 +10,18 @@ import ru.yandex.practicum.filmorate.model.ErrorResponse;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler({InvalidDateException.class, InvalidEmailException.class, InvalidLoginException.class,
+            InvalidTextFieldsException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidDateException(final InvalidDateException e) {
+    public ErrorResponse handleInvalidDateException(final RuntimeException e) {
         return new ErrorResponse(
                 e.getMessage()
         );
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidEmailException(final InvalidEmailException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidLoginException(final InvalidLoginException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidTextFieldsException(final InvalidTextFieldsException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
-
-    @ExceptionHandler
+    @ExceptionHandler({UnknownFilmException.class, UnknownUserException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUnknownFilmException(final UnknownFilmException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUnknownUserException(final UnknownUserException e) {
+    public ErrorResponse handleUnknownFilmException(final RuntimeException e) {
         return new ErrorResponse(
                 e.getMessage()
         );

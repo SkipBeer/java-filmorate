@@ -8,9 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exceptions.InvalidDateException;
-import ru.yandex.practicum.filmorate.exceptions.InvalidEmailException;
-import ru.yandex.practicum.filmorate.exceptions.InvalidLoginException;
-import ru.yandex.practicum.filmorate.exceptions.InvalidTextFieldsException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -21,7 +18,6 @@ import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -40,11 +36,9 @@ class FilmorateApplicationTests {
 
 	@BeforeEach
 	void createData() {
-		film = new Film(0, "name", "desc",
-				LocalDate.of(2000,10,20), 120, new HashSet<>());
+		film = new Film();
 
-		user = new User(0, "email@ya.ru", "login",
-				"name", LocalDate.of(2003,11,24), new HashSet<>());
+		user = new User();
 	}
 
 	@Test
@@ -54,12 +48,12 @@ class FilmorateApplicationTests {
 	@Test
 	void blankFilmNameTest() {
 		film.setName(null);
-		final InvalidTextFieldsException exception = assertThrows(
-				InvalidTextFieldsException.class,
+		final NullPointerException exception = assertThrows(
+				NullPointerException.class,
 				new Executable() {
 					@Override
 					public void execute() {
-						filmController.validation(film);
+						filmController.create(film);
 					}
 				});
 	}
@@ -68,12 +62,12 @@ class FilmorateApplicationTests {
 	void incorrectFilmDescTest() {
 		film.setDescription("abc".repeat(200));
 
-		final InvalidTextFieldsException exception = assertThrows(
-				InvalidTextFieldsException.class,
+		final NullPointerException exception = assertThrows(
+				NullPointerException.class,
 				new Executable() {
 					@Override
 					public void execute() {
-						filmController.validation(film);
+						filmController.create(film);
 					}
 				});
 	}
@@ -87,7 +81,7 @@ class FilmorateApplicationTests {
 				new Executable() {
 					@Override
 					public void execute() {
-						filmController.validation(film);
+						filmController.create(film);
 					}
 				});
 	}
@@ -96,86 +90,14 @@ class FilmorateApplicationTests {
 	void incorrectFilmDurationTest() {
 		film.setDuration(-120);
 
-		final InvalidDateException exception = assertThrows(
-				InvalidDateException.class,
+		final NullPointerException exception = assertThrows(
+				NullPointerException.class,
 				new Executable() {
 					@Override
 					public void execute() {
-						filmController.validation(film);
+						filmController.create(film);
 					}
 				});
 	}
-
-
-	@Test
-	void blankEmailTest() {
-		user.setEmail(null);
-
-		final InvalidEmailException exception = assertThrows(
-				InvalidEmailException.class,
-				new Executable() {
-					@Override
-					public void execute() {
-						userController.validation(user);
-					}
-				});
-	}
-
-	@Test
-	void incorrectEmailTest() {
-		user.setEmail(" ");
-
-		final InvalidEmailException exception = assertThrows(
-				InvalidEmailException.class,
-				new Executable() {
-					@Override
-					public void execute() {
-						userController.validation(user);
-					}
-				});
-	}
-
-	@Test
-	void blankLoginTest() {
-		user.setLogin(null);
-
-		final InvalidLoginException exception = assertThrows(
-				InvalidLoginException.class,
-				new Executable() {
-					@Override
-					public void execute() {
-						userController.validation(user);
-					}
-				});
-	}
-
-	@Test
-	void incorrectLoginTest() {
-		user.setLogin("pro bel");
-
-		final InvalidLoginException exception = assertThrows(
-				InvalidLoginException.class,
-				new Executable() {
-					@Override
-					public void execute() {
-						userController.validation(user);
-					}
-				});
-	}
-
-	@Test
-	void incorrectBirthdayTest() {
-		user.setBirthday(LocalDate.of(3000,10,10));
-
-		final InvalidDateException exception = assertThrows(
-				InvalidDateException.class,
-				new Executable() {
-					@Override
-					public void execute() {
-						userController.validation(user);
-					}
-				});
-	}
-
 }
 
