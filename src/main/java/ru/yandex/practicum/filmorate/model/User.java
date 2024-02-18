@@ -4,8 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
 
 @Getter
 @Setter
@@ -15,28 +14,27 @@ import java.util.Set;
 public class User {
     @EqualsAndHashCode.Include
     private int id;
-    @EqualsAndHashCode.Exclude
     @Email
     private String email;
-    @EqualsAndHashCode.Exclude
     @NotBlank
     private String login;
-    @EqualsAndHashCode.Exclude
     private String name;
-    @EqualsAndHashCode.Exclude
     @Past
     private LocalDate birthday;
 
-    @EqualsAndHashCode.Exclude
-    private final Set<Integer> friends = new HashSet<>();
+    private final HashMap<Integer, FriendshipStatus> friends = new HashMap<>();
 
     public Integer addFriend(Integer id) {
-        friends.add(id);
+        friends.put(id, FriendshipStatus.unconfirmed);
         return id;
     }
 
     public Integer deleteFriend(Integer id) {
         friends.remove(id);
         return id;
+    }
+
+    public void confirmFriendship(Integer id) {
+        friends.put(id, FriendshipStatus.confirmed);
     }
 }

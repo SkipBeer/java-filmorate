@@ -42,7 +42,7 @@ public class UserService {
 
     public List<User> getUserFriends(Integer id) {
         List<User> friends = new ArrayList<>();
-        for (Integer friendId : userStorage.getUserById(id).getFriends()) {
+        for (Integer friendId : userStorage.getUserById(id).getFriends().keySet()) {
             friends.add(userStorage.getUserById(friendId));
         }
         return friends;
@@ -70,8 +70,8 @@ public class UserService {
         User user = userStorage.getUserById(userId);
         User otherUser = userStorage.getUserById(otherId);
 
-        for (Integer friendId : user.getFriends()) {
-            if (otherUser.getFriends().contains(friendId)) {
+        for (Integer friendId : user.getFriends().keySet()) {
+            if (otherUser.getFriends().containsKey(friendId)) {
                 result.add(userStorage.getUserById(friendId));
             }
         }
