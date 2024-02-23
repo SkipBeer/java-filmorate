@@ -2,4 +2,4 @@
 Template repository for Filmorate project.
 
 Модель БД
-![alt text](https://github.com/SkipBeer/java-filmorate/blob/main/untitled.png)
+![alt text](https://github.com/SkipBeer/java-filmorate/blob/main/Untitled.png)
