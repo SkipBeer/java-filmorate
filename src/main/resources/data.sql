@@ -1,5 +1,5 @@
-DELETE * FROM mpa;
-DELETE * FROM genres;
+DELETE FROM mpa;
+DELETE FROM genres;
 
 INSERT INTO mpa(id, name) values(1, 'G');
 INSERT INTO mpa(id, name) values(2, 'PG');
