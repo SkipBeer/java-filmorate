@@ -31,7 +31,6 @@ public class UserController {
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-
         log.debug("Получен запрос на добавление фильма, Переданная сущность: '{}'", user.toString());
         if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
@@ -41,7 +40,6 @@ public class UserController {
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-
         log.debug("Получен запрос на обновление фильма, Переданная сущность: '{}'", user.toString());
         if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
@@ -74,6 +72,15 @@ public class UserController {
     @DeleteMapping("/{id}/friends/{friendId}")
     public User deleteFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
         return userService.deleteFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}")
+    public User deleteUser(@PathVariable Integer id) {
+        User user = userService.deleteUser(id);
+        if (user == null) {
+            throw new UnknownUserException("Пользователя с id " + id + " не существует");
+        }
+        return user;
     }
 
     @GetMapping("/{id}/friends")

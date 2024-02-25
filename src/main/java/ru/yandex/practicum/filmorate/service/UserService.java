@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
@@ -11,20 +12,15 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserStorage userStorage;
+    private final FriendsStorage friendsStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(UserStorage userStorage, FriendsStorage friendsStorage) {
         this.userStorage = userStorage;
-    }
-
-    private int generatorId = 0;
-
-    private int generateId() {
-        return ++generatorId;
+        this.friendsStorage = friendsStorage;
     }
 
     public User createUser(User user) {
-        user.setId(generateId());
         return userStorage.add(user);
     }
 
@@ -33,16 +29,32 @@ public class UserService {
     }
 
     public List<User> getAll() {
-        return new ArrayList<>(userStorage.getUsers().values());
+        List<User> users = userStorage.getUsers();
+        for (User user : users) {
+            user.setFriends(friendsStorage.getFriends(user.getId()));
+        }
+        return users;
     }
 
     public User getUserById(Integer id) {
-        return userStorage.getUserById(id);
+        User user = userStorage.getUserById(id);
+        if (user != null) {
+            user.setFriends(friendsStorage.getFriends(id));
+        }
+        return user;
+    }
+
+    public User deleteUser(Integer id) {
+        User user = userStorage.getUserById(id);
+        if (user == null) {
+            return null;
+        }
+        return userStorage.remove(user);
     }
 
     public List<User> getUserFriends(Integer id) {
         List<User> friends = new ArrayList<>();
-        for (Integer friendId : userStorage.getUserById(id).getFriends().keySet()) {
+        for (Integer friendId : friendsStorage.getFriends(id)) {
             friends.add(userStorage.getUserById(friendId));
         }
         return friends;
@@ -54,6 +66,7 @@ public class UserService {
         }
         userStorage.getUserById(userId).addFriend(friendId);
         userStorage.getUserById(friendId).addFriend(userId);
+        friendsStorage.addFriend(userId, friendId);
         return userStorage.getUserById(userId);
     }
 
@@ -62,6 +75,7 @@ public class UserService {
             return null;
         }
         userStorage.getUserById(userId).deleteFriend(friendId);
+        friendsStorage.deleteFriend(userId, friendId);
         return userStorage.getUserById(userId);
     }
 
@@ -70,8 +84,9 @@ public class UserService {
         User user = userStorage.getUserById(userId);
         User otherUser = userStorage.getUserById(otherId);
 
-        for (Integer friendId : user.getFriends().keySet()) {
-            if (otherUser.getFriends().containsKey(friendId)) {
+        List<Integer> friendsOfOtherUser = friendsStorage.getFriends(otherId);
+        for (Integer friendId : friendsStorage.getFriends(userId)) {
+            if (friendsOfOtherUser.contains(friendId)) {
                 result.add(userStorage.getUserById(friendId));
             }
         }

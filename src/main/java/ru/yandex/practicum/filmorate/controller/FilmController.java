@@ -42,7 +42,6 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-
         log.debug("Получен запрос на добавление фильма, Переданная сущность: '{}'", film.toString());
         if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
             throw new InvalidDateException("дата выпуска фильма должна быть после 28.12.1895");
@@ -80,6 +79,11 @@ public class FilmController {
             throw new UnknownFilmException("Фильм или пользователь с таким id не существует");
         }
         return film;
+    }
+
+    @DeleteMapping("/{id}")
+    public Film deleteFilm(@PathVariable Integer id) {
+        return filmService.deleteFilm(id);
     }
 
     @GetMapping("/popular")

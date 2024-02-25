@@ -4,14 +4,12 @@ import lombok.*;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
-@RequiredArgsConstructor
+@Data
 public class User {
+
     @EqualsAndHashCode.Include
     private int id;
     @Email
@@ -22,10 +20,10 @@ public class User {
     @Past
     private LocalDate birthday;
 
-    private final HashMap<Integer, FriendshipStatus> friends = new HashMap<>();
+    private final List<Integer> friends = new ArrayList<>();
 
     public Integer addFriend(Integer id) {
-        friends.put(id, FriendshipStatus.unconfirmed);
+        friends.add(id);
         return id;
     }
 
@@ -34,7 +32,7 @@ public class User {
         return id;
     }
 
-    public void confirmFriendship(Integer id) {
-        friends.put(id, FriendshipStatus.confirmed);
+    public void setFriends(List<Integer> newFriends) {
+        friends.addAll(newFriends);
     }
 }
