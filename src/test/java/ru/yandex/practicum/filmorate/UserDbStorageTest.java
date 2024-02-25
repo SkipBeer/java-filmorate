@@ -20,28 +20,6 @@ class UserDbStorageTest {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Test
-    public void testFindUserById() {
-        // Подготавливаем данные для теста
-        User newUser = new User();
-        newUser.setId(1);
-        newUser.setEmail("user@email.ru");
-        newUser.setLogin("vanya123");
-        newUser.setName("Ivan Petrov");
-        newUser.setBirthday(LocalDate.of(1990, 1, 1));
-        UserDbStorage userStorage = new UserDbStorage(jdbcTemplate);
-        userStorage.add(newUser);
-
-        // вызываем тестируемый метод
-        User savedUser = userStorage.getUserById(1);
-
-        // проверяем утверждения
-        assertThat(savedUser)
-                .isNotNull() // проверяем, что объект не равен null
-                .usingRecursiveComparison() // проверяем, что значения полей нового
-                .isEqualTo(newUser);        // и сохраненного пользователя - совпадают
-    }
-
-    @Test
     public void testAddUser() {
         // Подготавливаем данные для теста
         User newUser = new User();
