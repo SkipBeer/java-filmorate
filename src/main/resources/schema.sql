@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS friends (
 
 CREATE TABLE IF NOT EXISTS genres (
     id integer,
-    name varchar UNIQUE
+    name varchar
 );
 
 CREATE TABLE IF NOT EXISTS genres_films (
@@ -38,6 +38,6 @@ CREATE TABLE IF NOT EXISTS genres_films (
 
 CREATE TABLE IF NOT EXISTS mpa (
     id integer,
-    name varchar UNIQUE
+    name varchar
 );
 
