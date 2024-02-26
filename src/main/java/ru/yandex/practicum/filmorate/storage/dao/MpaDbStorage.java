@@ -20,12 +20,14 @@ public class MpaDbStorage implements MpaStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
     public Mpa get(Integer id) {
       return jdbcTemplate.query("SELECT * FROM mpa WHERE id = :id",
               new MapSqlParameterSource("id", id),
               new BeanPropertyRowMapper<>(Mpa.class)).stream().findAny().orElse(null);
     }
 
+    @Override
     public List<Mpa> getAll() {
         return jdbcTemplate.query("SELECT * FROM mpa", new BeanPropertyRowMapper<>(Mpa.class));
     }

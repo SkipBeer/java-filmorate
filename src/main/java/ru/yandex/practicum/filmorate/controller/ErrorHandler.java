@@ -20,7 +20,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({UnknownFilmException.class, UnknownUserException.class,
-            UnknownMpaException.class, UnknownGenreException.class})
+            UnknownMpaException.class, UnknownGenreException.class, UpdateFilmException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUnknownFilmException(final RuntimeException e) {
         return new ErrorResponse(

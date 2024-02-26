@@ -28,6 +28,7 @@ public class UserDbStorage implements UserStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
     public User add(User user) {
         String sqlQuery = "insert into users(email, login, name, birthday)" +
                 "values (:email, :login, :name, :birthday)";
@@ -45,6 +46,7 @@ public class UserDbStorage implements UserStorage {
         return user;
     }
 
+    @Override
     public User update(User user) {
         String sqlQuery = "update users set " +
                 "email = :email, login = :login, name = :name, birthday = :birthday " +
@@ -62,16 +64,19 @@ public class UserDbStorage implements UserStorage {
         return user;
     }
 
+    @Override
     public User getUserById(Integer id) {
         return jdbcTemplate.query("select * from users where id = :id",
                         new MapSqlParameterSource("id", id),
                         new UserMapper()).stream().findAny().orElse(null);
     }
 
+    @Override
     public List<User> getUsers() {
         return jdbcTemplate.query("select * from users", new UserMapper());
     }
 
+    @Override
     public User remove(User user) {
         jdbcTemplate.update("delete from users where id = :id",
                 new MapSqlParameterSource("id", user.getId()));

@@ -21,12 +21,14 @@ public class GenreDbStorage implements GenreStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
     public Genre get(Integer id) {
         return jdbcTemplate.query("SELECT * FROM genres WHERE id = :id",
                 new MapSqlParameterSource("id", id),
                 new BeanPropertyRowMapper<>(Genre.class)).stream().findAny().orElse(null);
     }
 
+    @Override
     public List<Genre> getAll() {
         return jdbcTemplate.query("SELECT * FROM genres", new BeanPropertyRowMapper<>(Genre.class));
     }

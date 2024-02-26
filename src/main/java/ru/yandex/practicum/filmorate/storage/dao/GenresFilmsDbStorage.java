@@ -21,6 +21,7 @@ public class GenresFilmsDbStorage implements GenresFilmsStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
     public void add(Film film) {
         Set<Genre> genres = film.getGenres();
         Integer id = film.getId();
@@ -32,17 +33,20 @@ public class GenresFilmsDbStorage implements GenresFilmsStorage {
         }
     }
 
+    @Override
     public void remove(Integer id) {
         jdbcTemplate.update("DELETE FROM genres_films WHERE film_id = :id",
                 new MapSqlParameterSource("id", id));
     }
 
+    @Override
     public Set<Genre> getGenresForFilm(Integer id) {
         return new HashSet<>(jdbcTemplate.query("SELECT g.name, g.id FROM genres_films AS gf " +
                         "LEFT JOIN genres AS g ON gf.genre_id = g.id WHERE gf.film_id = :id",
                 new MapSqlParameterSource("id", id), new BeanPropertyRowMapper<>(Genre.class)));
     }
 
+    @Override
     public Set<Genre> updateGenresForFilm(Film film) {
         remove(film.getId());
         add(film);

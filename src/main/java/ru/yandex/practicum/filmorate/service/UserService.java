@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.UnknownUserException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -21,11 +22,21 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         return userStorage.add(user);
     }
 
     public User updateUser(User user) {
-        return userStorage.update(user);
+        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
+        User updatedUser = userStorage.update(user);
+        if (updatedUser == null) {
+            throw new UnknownUserException("Пользователь с id " + user.getId() + " не существует");
+        }
+        return updatedUser;
     }
 
     public List<User> getAll() {
@@ -38,16 +49,17 @@ public class UserService {
 
     public User getUserById(Integer id) {
         User user = userStorage.getUserById(id);
-        if (user != null) {
-            user.setFriends(friendsStorage.getFriends(id));
+        if (user == null) {
+            throw new UnknownUserException("Пользователь с id " + id + " не существует");
         }
+        user.setFriends(friendsStorage.getFriends(id));
         return user;
     }
 
     public User deleteUser(Integer id) {
         User user = userStorage.getUserById(id);
         if (user == null) {
-            return null;
+            throw new UnknownUserException("Пользователя с id " + id + " не существует");
         }
         return userStorage.remove(user);
     }
@@ -62,7 +74,7 @@ public class UserService {
 
     public User addFriend(Integer userId, Integer friendId) {
         if (userStorage.getUserById(userId) == null || userStorage.getUserById(friendId) == null) {
-            return null;
+            throw new UnknownUserException("Пользователя с таким id не существует");
         }
         userStorage.getUserById(userId).addFriend(friendId);
         userStorage.getUserById(friendId).addFriend(userId);

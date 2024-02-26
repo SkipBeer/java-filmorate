@@ -1,5 +1,15 @@
+DELETE FROM genres_films;
+DELETE FROM films;
 DELETE FROM mpa;
 DELETE FROM genres;
+
+
+--MERGE INTO mpa m
+--USING (VALUES (1, 'G')) AS S(id, name)
+--ON m.id = S.id
+--WHEN NOT MATCHED THEN
+--INSERT (id, name)
+--VALUES (1, 'G');
 
 INSERT INTO mpa(id, name) values(1, 'G');
 INSERT INTO mpa(id, name) values(2, 'PG');

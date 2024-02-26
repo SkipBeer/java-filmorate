@@ -2,11 +2,14 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.InvalidDateException;
+import ru.yandex.practicum.filmorate.exceptions.UnknownFilmException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,11 +30,21 @@ public class FilmService {
     }
 
     public Film addFilm(Film film) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
+            throw new InvalidDateException("дата выпуска фильма должна быть после 28.12.1895");
+        }
         return filmStorage.add(film);
     }
 
     public Film updateFilm(Film film) {
-        return filmStorage.update(film);
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
+            throw new InvalidDateException("дата выпуска фильма должна быть после 28.12.1895");
+        }
+        Film updatedFilm = filmStorage.update(film);
+        if (updatedFilm == null) {
+            throw new UnknownFilmException("Фильм с id " + film.getId() + " не существует");
+        }
+        return updatedFilm;
     }
 
     public List<Film> getAll() {
@@ -39,20 +52,24 @@ public class FilmService {
     }
 
     public Film getFilmById(Integer id) {
-        return filmStorage.getFilmById(id);
+        Film film = filmStorage.getFilmById(id);
+        if (film == null) {
+            throw new UnknownFilmException("Фильм с id " + id + " не найден");
+        }
+        return film;
     }
 
     public Film deleteFilm(Integer id) {
         Film film = filmStorage.getFilmById(id);
         if (film == null) {
-            return null;
+            throw new UnknownFilmException("Фильм с id " + id + " не найден");
         }
         return filmStorage.remove(film);
     }
 
     public Film addLike(Integer filmId, Integer userId) {
         if (filmStorage.getFilmById(filmId) == null || userStorage.getUserById(userId) == null) {
-            return null;
+            throw new UnknownFilmException("Фильм или пользователь с таким id не существует");
         }
         likesStorage.addLike(filmId, userId);
         return filmStorage.update(filmStorage.getFilmById(filmId));
@@ -60,7 +77,7 @@ public class FilmService {
 
     public Film deleteLike(Integer filmId, Integer userId) {
         if (filmStorage.getFilmById(filmId) == null || userStorage.getUserById(userId) == null) {
-            return null;
+            throw new UnknownFilmException("Фильм или пользователь с таким id не существует");
         }
         likesStorage.deleteLike(filmId, userId);
         return filmStorage.update(filmStorage.getFilmById(filmId));

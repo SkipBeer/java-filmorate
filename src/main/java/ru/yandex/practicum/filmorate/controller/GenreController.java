@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exceptions.UnknownGenreException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
@@ -31,10 +30,6 @@ public class GenreController {
 
     @GetMapping("/{id}")
     public Genre getGenre(@PathVariable("id") Integer id) {
-        Genre genre = service.get(id);
-        if (genre == null) {
-            throw new UnknownGenreException("Жанра с id " + id + " не существует");
-        }
-        return genre;
+        return service.get(id);
     }
 }

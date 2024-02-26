@@ -12,8 +12,6 @@ public interface UserStorage {
 
     User remove(User user);
 
-    //Map<Integer, User> getUsers();
-
     List<User> getUsers();
 
     User getUserById(Integer id);
