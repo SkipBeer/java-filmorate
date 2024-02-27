@@ -6,7 +6,7 @@ public interface FriendsStorage {
 
     void addFriend(Integer userid, Integer friendId);
 
-    Integer confirmFriendship(Integer userId, Integer friendId);
+    int confirmFriendship(Integer userId, Integer friendId);
 
     void deleteFriend(Integer userId, Integer friendId);
 

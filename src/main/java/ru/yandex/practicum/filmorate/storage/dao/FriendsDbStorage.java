@@ -28,7 +28,7 @@ public class FriendsDbStorage implements FriendsStorage {
     }
 
     @Override
-    public Integer confirmFriendship(Integer userId, Integer friendId) {
+    public int confirmFriendship(Integer userId, Integer friendId) {
         String sqlQuery = "update friends set status = ? where user_id = ? and friend_id = ?";
         jdbcTemplate.update(sqlQuery, FriendshipStatus.CONFIRMED.toString(), friendId, userId);
         return userId;
