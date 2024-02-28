@@ -6,12 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exceptions.InvalidDateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
@@ -26,10 +24,8 @@ class FilmorateApplicationTests {
 
 	FilmStorage filmStorage = new InMemoryFilmStorage();
 	UserStorage userStorage = new InMemoryUserStorage();
-	FilmService filmService = new FilmService(filmStorage, userStorage);
-	UserService userService = new UserService(userStorage);
+	FilmService filmService = new FilmService(filmStorage, userStorage, null);
 	FilmController filmController = new FilmController(filmService);
-	UserController userController = new UserController(userService);
 
 	Film film;
 	User user;

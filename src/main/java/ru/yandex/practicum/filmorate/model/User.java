@@ -4,31 +4,23 @@ import lombok.*;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
-@RequiredArgsConstructor
+@Data
 public class User {
+
     @EqualsAndHashCode.Include
     private int id;
-    @EqualsAndHashCode.Exclude
     @Email
     private String email;
-    @EqualsAndHashCode.Exclude
     @NotBlank
     private String login;
-    @EqualsAndHashCode.Exclude
     private String name;
-    @EqualsAndHashCode.Exclude
     @Past
     private LocalDate birthday;
 
-    @EqualsAndHashCode.Exclude
-    private final Set<Integer> friends = new HashSet<>();
+    private final List<Integer> friends = new ArrayList<>();
 
     public Integer addFriend(Integer id) {
         friends.add(id);
@@ -38,5 +30,9 @@ public class User {
     public Integer deleteFriend(Integer id) {
         friends.remove(id);
         return id;
+    }
+
+    public void setFriends(List<Integer> newFriends) {
+        friends.addAll(newFriends);
     }
 }
